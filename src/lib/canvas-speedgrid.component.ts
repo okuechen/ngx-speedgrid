@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { CanvasBaseDirective, ICanvas } from 'projects/angular-canvas-base/src/public-api';
+import { CanvasBaseDirective, ICanvas } from 'angular-canvas-base';
 
 @Component({
     selector: 'canvas-speedgrid',
@@ -12,7 +12,7 @@ export class CanvasSpeedgridComponent extends CanvasBaseDirective {
         this.resize(500, 500);
     }
 
-    protected onDraw(canvas: ICanvas, frameTime: number) {
+    protected onDraw(canvas: ICanvas, frameTime: number): void {
         canvas.drawRect(10, 10, 180, 180, true, true);
     }
 }
