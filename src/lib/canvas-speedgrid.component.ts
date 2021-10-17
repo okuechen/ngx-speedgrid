@@ -1,44 +1,18 @@
 import { Component, Injector } from '@angular/core';
-import { ICanvas, Point } from 'projects/angular-canvas-base/src/public-api';
-import { CanvasBaseComponent } from '../../../angular-canvas-base/src/lib/canvas-base-component';
+import { CanvasBaseDirective, ICanvas } from 'projects/angular-canvas-base/src/public-api';
 
 @Component({
     selector: 'canvas-speedgrid',
     template: ''
 })
-export class CanvasSpeedgridComponent extends CanvasBaseComponent {
+export class CanvasSpeedgridComponent extends CanvasBaseDirective {
     constructor(injector: Injector) {
         super(injector);
 
-        this.resize(1000, 200);
+        this.resize(500, 500);
     }
 
-    protected onDraw(canvas: ICanvas) {
-        canvas.drawRect(10, 10, 180, 180, false, true);
-    }
-
-    protected onFrameUpdate(deltaTime: number) {
-        // No continous drawing, we can ignore this
-    }
-
-    protected eventResize(width: number, height: number) {
-        // nothing for now
-    }
-
-    protected eventClick(event: PointerEvent) {
-        // nothing for now
-    }
-
-    protected eventDrag(event: PointerEvent): boolean {
-        // nothing for now
-        return false;
-    }
-
-    protected eventDragMove(event: PointerEvent) {
-        // nothing for now
-    }
-
-    protected eventDrop(event: PointerEvent, startPosition: Point) {
-        // nothing for now
+    protected onDraw(canvas: ICanvas, frameTime: number) {
+        canvas.drawRect(10, 10, 180, 180, true, true);
     }
 }
