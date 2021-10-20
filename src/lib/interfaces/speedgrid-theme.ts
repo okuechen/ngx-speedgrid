@@ -2,10 +2,12 @@ import { SpeedgridBodyCell } from './speedgrid-body-cell';
 import { SpeedgridHeaderCell } from './speedgrid-header-cell';
 import { SpeedgridFooterCell } from './speedgrid-footer-cell';
 import { ICanvas } from 'angular-canvas-base';
+import { SpeedgridColumn } from './speedgrid-column';
+import { SpeedgridOptions } from './speedgrid-options';
 
 export interface ISpeedgridTheme {
 
-    startDrawing(canvas: ICanvas): void;
+    startDrawing(canvas: ICanvas, columns: SpeedgridColumn<any>[], options: SpeedgridOptions): void;
 
     startDrawingHeader(canvas: ICanvas): void;
 

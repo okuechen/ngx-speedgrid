@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
 
-import { CanvasBaseDirective, CanvasDrawMode, FillStyle, ICanvas, StrokeStyle } from 'angular-canvas-base';
+import { CanvasBaseDirective, CanvasDrawMode, FillStyle, ICanvas } from 'angular-canvas-base';
 
 import { SpeedgridColumn } from './interfaces/speedgrid-column';
 import { ISpeedgridTheme } from './interfaces/speedgrid-theme';
@@ -9,6 +9,7 @@ import { SpeedgridTheme } from './themes/speedgrid-theme';
 import { getDefaultSpeedgridOptions, SpeedgridOptions } from './interfaces/speedgrid-options';
 import { SpeedgridLocation } from './interfaces/speedgrid-location';
 import { SpeedgridLayout } from './classes/speedgrid-layout';
+import { SpeedgridThemeDark } from "./themes/speedgrid-theme-dark";
 
 @Component({
     selector: 'canvas-speedgrid',
@@ -28,6 +29,7 @@ export class CanvasSpeedgridComponent<Entity = unknown> extends CanvasBaseDirect
 
     private scrollOffsetX = 0;
     private scrollOffsetY = 0;
+    private autoScrollSpeed = _.random(4, 10, false);
 
     private layout = new SpeedgridLayout();
 
@@ -44,9 +46,9 @@ export class CanvasSpeedgridComponent<Entity = unknown> extends CanvasBaseDirect
     }
 
     protected onDraw(canvas: ICanvas, frameTime: number): void {
-        this.scrollOffsetY += 8;
+        this.scrollOffsetY += this.autoScrollSpeed;
 
-        this.theme.startDrawing(canvas);
+        this.theme.startDrawing(canvas, this.columns, this.options);
 
         // Draw body cells first, so header and footer overdraw instead of more expensive clipping
         this.theme.startDrawingBody(canvas);
@@ -65,7 +67,11 @@ export class CanvasSpeedgridComponent<Entity = unknown> extends CanvasBaseDirect
         this.layout.prepareVisibleHeaderCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
             this.theme.drawHeaderCell(canvas, cell);
 
-            canvas.setFillStyle(new FillStyle('#000'));
+            if (this.theme instanceof SpeedgridThemeDark) {
+                canvas.setFillStyle(new FillStyle('#FFF'));
+            } else {
+                canvas.setFillStyle(new FillStyle('#000'));
+            }
 
             canvas.drawText(this.columns[cell.tablePositionX].label, cell.x + 4, cell.y + 21, cell.width, true, false);
         });

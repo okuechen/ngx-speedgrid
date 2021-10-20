@@ -1,7 +1,9 @@
 import { ICanvas, FillStyle, StrokeStyle, CanvasFont } from 'angular-canvas-base';
 import { SpeedgridBodyCell } from '../interfaces/speedgrid-body-cell';
+import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { SpeedgridFooterCell } from '../interfaces/speedgrid-footer-cell';
 import { SpeedgridHeaderCell } from '../interfaces/speedgrid-header-cell';
+import { SpeedgridOptions } from '../interfaces/speedgrid-options';
 import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
 
 export class SpeedgridTheme implements ISpeedgridTheme {
@@ -9,13 +11,13 @@ export class SpeedgridTheme implements ISpeedgridTheme {
     protected headerFillStyle = new FillStyle('#999');
     protected bodyFillStyle = new FillStyle('#bbb');
     protected strokeStyle = new StrokeStyle('#333', 1);
-    protected fontStyle = new CanvasFont(16, 'Segoe UI');
+    protected fontStyle = new CanvasFont(14, 'Segoe UI');
 
     constructor() {
 
     }
 
-    public startDrawing(canvas: ICanvas): void {
+    public startDrawing(canvas: ICanvas, columns: SpeedgridColumn<any>[], options: SpeedgridOptions): void {
 
     }
 
