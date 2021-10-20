@@ -1,6 +1,7 @@
 import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import * as _ from 'lodash';
 
-import { CanvasBaseDirective, ICanvas } from 'angular-canvas-base';
+import { CanvasBaseDirective, CanvasDrawMode, FillStyle, ICanvas, StrokeStyle } from 'angular-canvas-base';
 
 import { SpeedgridColumn } from './interfaces/speedgrid-column';
 import { ISpeedgridTheme } from './interfaces/speedgrid-theme';
@@ -13,9 +14,9 @@ import { SpeedgridLayout } from './classes/speedgrid-layout';
     selector: 'canvas-speedgrid',
     template: ''
 })
-export class CanvasSpeedgridComponent<Entity> extends CanvasBaseDirective implements OnChanges {
+export class CanvasSpeedgridComponent<Entity = unknown> extends CanvasBaseDirective implements OnChanges {
 
-    @Input() public columns: SpeedgridColumn[] = [];
+    @Input() public columns: SpeedgridColumn<Entity>[] = [];
 
     @Input() public options: SpeedgridOptions = getDefaultSpeedgridOptions();
 
@@ -33,12 +34,8 @@ export class CanvasSpeedgridComponent<Entity> extends CanvasBaseDirective implem
     constructor(injector: Injector) {
         super(injector);
 
-        this.resize(1000, 500);
-
-        window.setInterval(() => {
-            this.scrollOffsetY += 1;
-            this.draw();
-        }, 1000 / 60);
+        this.resize(1000, 1000);
+        this.drawMode = CanvasDrawMode.Continuous;
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -47,11 +44,38 @@ export class CanvasSpeedgridComponent<Entity> extends CanvasBaseDirective implem
     }
 
     protected onDraw(canvas: ICanvas, frameTime: number): void {
-        // We just could get a new array with cells and handle it, but that would create new arrays. We avoid object creation.
-        // Also we draw body cells first, so header and footer overdraw instead of more expensive clipping
-        this.layout.prepareVisibleBodyCells(this.scrollOffsetX, this.scrollOffsetY, cell => this.theme.drawBodyCell(canvas, cell));
-        this.layout.prepareVisibleHeaderCells(this.scrollOffsetX, this.scrollOffsetY, cell => this.theme.drawHeaderCell(canvas, cell));
-        this.layout.prepareVisibleFooterCells(this.scrollOffsetX, this.scrollOffsetY, cell => this.theme.drawFooterCell(canvas, cell));
+        this.scrollOffsetY += 8;
+
+        this.theme.startDrawing(canvas);
+
+        // Draw body cells first, so header and footer overdraw instead of more expensive clipping
+        this.theme.startDrawingBody(canvas);
+        this.layout.prepareVisibleBodyCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
+            this.theme.drawBodyCell(canvas, cell);
+
+            const obj = this.data?.[cell.tablePositionY];
+
+            if (obj) {
+                canvas.setFillStyle(new FillStyle('#000'));
+                canvas.drawText(_.get(obj, this.columns[cell.tablePositionX].property), cell.x + 4, cell.y + 21, undefined, true, false);
+            }
+        });
+
+        this.theme.startDrawingHeader(canvas);
+        this.layout.prepareVisibleHeaderCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
+            this.theme.drawHeaderCell(canvas, cell);
+
+            canvas.setFillStyle(new FillStyle('#000'));
+
+            canvas.drawText(this.columns[cell.tablePositionX].label, cell.x + 4, cell.y + 21, cell.width, true, false);
+        });
+
+        this.theme.startDrawingFooter(canvas);
+        this.layout.prepareVisibleFooterCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
+            this.theme.drawFooterCell(canvas, cell);
+        });
+
+        this.theme.finishDrawing(canvas);
     }
 
     protected eventResize(width: number, height: number): void {

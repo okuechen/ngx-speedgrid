@@ -3,7 +3,7 @@
   "author": "Oliver Küchen",
   "license": "MIT",
   "bugs": {
-      "url": "https://github.com/okuechen/angular-canvas-speedgrid/issues"
+    "url": "https://github.com/okuechen/angular-canvas-speedgrid/issues"
   },
   "homepage": "https://github.com/okuechen/angular-canvas-speedgrid",
   "version": "0.1.0",
@@ -12,15 +12,15 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "keywords": [
-      "angular",
-      "canvas",
-      "datagrid",
-      "performance",
-      "custom component"
+    "angular",
+    "canvas",
+    "datagrid",
+    "performance",
+    "custom component"
   ],
   "repository": {
-      "type": "git",
-      "url": "https://github.com/okuechen/angular-canvas-speedgrid.git"
+    "type": "git",
+    "url": "https://github.com/okuechen/angular-canvas-speedgrid.git"
   },
   "peerDependencies": {
     "@angular/common": "~11.0.9",
@@ -28,6 +28,10 @@
     "angular-canvas-base": "0.1.0"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "tslib": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.175"
   }
 }

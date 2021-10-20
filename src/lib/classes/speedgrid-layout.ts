@@ -22,7 +22,7 @@ export class SpeedgridLayout {
     protected footerHeight = 0;
     protected gridHeight = 0;
 
-    public recalcLayout(columns: SpeedgridColumn[], options: SpeedgridOptions, height: number): void {
+    public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number): void {
         this.gridHeight = height;
         this.headerHeight = options.headerHeight;
         this.rowHeight = options.rowHeight;
@@ -89,9 +89,8 @@ export class SpeedgridLayout {
 
     public prepareVisibleBodyCells(offsetX: number, offsetY: number, cellCallback: (cell: SpeedgridBodyCell) => void): void {
         const rowOffset = offsetY % this.rowHeight;
-        const limitY = this.gridHeight - this.footerHeight;
-
         let y = this.headerHeight - rowOffset;
+        let posY = Math.ceil(offsetY / this.rowHeight) + (rowOffset ? 0 : 1 );
 
         this.bodyRows.forEach(row => {
             let x = 0;
@@ -100,6 +99,7 @@ export class SpeedgridLayout {
                 if (cell.width + x > offsetX) {
                     cell.x = x;
                     cell.y = y;
+                    cell.tablePositionY = posY;
 
                     cellCallback(cell);
 
@@ -108,6 +108,7 @@ export class SpeedgridLayout {
             });
 
             y += this.rowHeight;
+            posY ++;
         });
     }
 
