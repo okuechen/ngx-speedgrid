@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    position: relative;
+}
+
+.container {
+    display: block;
+    overflow: auto;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.virtual-content {
+    display: block;
+}
+
+.child {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}

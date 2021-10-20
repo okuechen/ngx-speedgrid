@@ -78,12 +78,12 @@ export class SpeedgridLayout {
         let x = 0;
         this.headerCells.forEach(cell => {
             if (cell.width + x > offsetX) {
-                cell.x = x;
+                cell.x = x - offsetX;
 
                 cellCallback(cell);
-
-                x += cell.width;
             }
+
+            x += cell.width;
         });
     }
 
@@ -97,14 +97,14 @@ export class SpeedgridLayout {
 
             row.cells.forEach(cell => {
                 if (cell.width + x > offsetX) {
-                    cell.x = x;
+                    cell.x = x - offsetX;
                     cell.y = y;
                     cell.tablePositionY = posY;
 
                     cellCallback(cell);
-
-                    x += cell.width;
                 }
+
+                x += cell.width;
             });
 
             y += this.rowHeight;
@@ -116,13 +116,13 @@ export class SpeedgridLayout {
         let x = 0;
         this.footerCells.forEach(cell => {
             if (cell.width + x > offsetX) {
-                cell.x = x;
+                cell.x = x - offsetX;
                 cell.y = this.gridHeight - this.footerHeight;
 
                 cellCallback(cell);
-
-                x += cell.width;
             }
+
+            x += cell.width;
         });
     }
 }

@@ -1,21 +1,21 @@
-import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import * as _ from 'lodash';
+/// <reference types="resize-observer-browser" />
 
-import { CanvasBaseDirective, CanvasDrawMode, FillStyle, ICanvas } from 'angular-canvas-base';
-
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, Renderer2, ViewChild, OnDestroy, AfterContentInit } from '@angular/core';
 import { SpeedgridColumn } from './interfaces/speedgrid-column';
+import { SpeedgridLocation } from './interfaces/speedgrid-location';
+import { getDefaultSpeedgridOptions, SpeedgridOptions } from './interfaces/speedgrid-options';
 import { ISpeedgridTheme } from './interfaces/speedgrid-theme';
 import { SpeedgridTheme } from './themes/speedgrid-theme';
-import { getDefaultSpeedgridOptions, SpeedgridOptions } from './interfaces/speedgrid-options';
-import { SpeedgridLocation } from './interfaces/speedgrid-location';
-import { SpeedgridLayout } from './classes/speedgrid-layout';
-import { SpeedgridThemeDark } from "./themes/speedgrid-theme-dark";
+import { CanvasSpeedgridChildComponent } from './canvas/canvas-speedgrid-child.component';
 
 @Component({
     selector: 'canvas-speedgrid',
-    template: ''
+    templateUrl: './canvas-speedgrid.component.html',
+    styleUrls: ['./canvas-speedgrid.component.scss']
 })
-export class CanvasSpeedgridComponent<Entity = unknown> extends CanvasBaseDirective implements OnChanges {
+export class CanvasSpeedgridComponent<Entity = any> implements AfterContentInit, OnChanges, OnDestroy {
+    @ViewChild('canvas') public canvas!: CanvasSpeedgridChildComponent;
+    @ViewChild('content') public content!: ElementRef;
 
     @Input() public columns: SpeedgridColumn<Entity>[] = [];
 
@@ -27,71 +27,73 @@ export class CanvasSpeedgridComponent<Entity = unknown> extends CanvasBaseDirect
 
     @Output() public clicked: EventEmitter<SpeedgridLocation> = new EventEmitter<SpeedgridLocation>();
 
-    private scrollOffsetX = 0;
-    private scrollOffsetY = 0;
-    private autoScrollSpeed = _.random(4, 10, false);
+    public scrollOffsetX = 0;
+    public scrollOffsetY = 0;
 
-    private layout = new SpeedgridLayout();
+    private contentWidth = 0;
+    private contentHeight = 0;
+    private containerWidth = 0;
+    private containerHeight = 0;
 
-    constructor(injector: Injector) {
-        super(injector);
+    private observer: ResizeObserver | null = null;
 
-        this.resize(1000, 1000);
-        this.drawMode = CanvasDrawMode.Continuous;
+    constructor(private elementRef: ElementRef, private renderer: Renderer2) {
+
+    }
+
+    public ngAfterContentInit(): void {
+        this.observer = new ResizeObserver(entries => {
+            entries.forEach((entry: ResizeObserverEntry) => {
+                this.containerWidth = entry.contentRect.width;
+                this.containerHeight = entry.contentRect.height;
+            });
+
+            this.resize();
+        });
+
+        this.observer.observe(this.elementRef.nativeElement);
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        this.recalcLayout();
-        this.draw();
+        let resize = false;
+
+        if (changes.columns != null) {
+            let fullWidth = 0;
+            this.columns?.forEach(col => fullWidth += col.width);
+            this.contentWidth = fullWidth;
+            resize = true;
+        }
+
+        if (changes.data != null) {
+            this.contentHeight = (this.data?.length ?? 0) * this.options.rowHeight;
+            resize = true;
+        }
+
+        if (resize) {
+            this.resize();
+        }
     }
 
-    protected onDraw(canvas: ICanvas, frameTime: number): void {
-        this.scrollOffsetY += this.autoScrollSpeed;
-
-        this.theme.startDrawing(canvas, this.columns, this.options);
-
-        // Draw body cells first, so header and footer overdraw instead of more expensive clipping
-        this.theme.startDrawingBody(canvas);
-        this.layout.prepareVisibleBodyCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
-            this.theme.drawBodyCell(canvas, cell);
-
-            const obj = this.data?.[cell.tablePositionY];
-
-            if (obj) {
-                canvas.setFillStyle(new FillStyle('#000'));
-                canvas.drawText(_.get(obj, this.columns[cell.tablePositionX].property), cell.x + 4, cell.y + 21, undefined, true, false);
-            }
-        });
-
-        this.theme.startDrawingHeader(canvas);
-        this.layout.prepareVisibleHeaderCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
-            this.theme.drawHeaderCell(canvas, cell);
-
-            if (this.theme instanceof SpeedgridThemeDark) {
-                canvas.setFillStyle(new FillStyle('#FFF'));
-            } else {
-                canvas.setFillStyle(new FillStyle('#000'));
-            }
-
-            canvas.drawText(this.columns[cell.tablePositionX].label, cell.x + 4, cell.y + 21, cell.width, true, false);
-        });
-
-        this.theme.startDrawingFooter(canvas);
-        this.layout.prepareVisibleFooterCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
-            this.theme.drawFooterCell(canvas, cell);
-        });
-
-        this.theme.finishDrawing(canvas);
+    public ngOnDestroy(): void {
+        if (this.observer) {
+            this.observer.unobserve(this.elementRef.nativeElement);
+        }
     }
 
-    protected eventResize(width: number, height: number): void {
-        this.recalcLayout();
+    public onScroll(event: any) {
+        this.scrollOffsetX = event.target.scrollLeft;
+        this.scrollOffsetY = event.target.scrollTop;
     }
 
-    /**
-     * Prevent object creation during drawing cause this would slowdown.
-     */
-    protected recalcLayout(): void {
-        this.layout.recalcLayout(this.columns, this.options, this.height);
+    public resize(): void {
+        if (this.content) {
+            this.renderer.setStyle(this.content.nativeElement, 'width', `${ this.contentWidth }px`);
+            this.renderer.setStyle(this.content.nativeElement, 'height', `${ this.contentHeight }px`);
+        }
+
+        if (this.canvas) {
+            this.canvas.resize(this.containerWidth, this.containerHeight);
+        }
     }
+
 }
