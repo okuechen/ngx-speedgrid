@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
 
-import { CanvasBaseDirective, CanvasDrawMode, FillStyle, ICanvas } from 'angular-canvas-base';
+import { CanvasBaseDirective, FillStyle, ICanvas } from 'angular-canvas-base';
 
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
@@ -10,6 +10,7 @@ import { getDefaultSpeedgridOptions, SpeedgridOptions } from '../interfaces/spee
 import { SpeedgridLocation } from '../interfaces/speedgrid-location';
 import { SpeedgridLayout } from '../classes/speedgrid-layout';
 import { SpeedgridThemeDark } from '../themes/speedgrid-theme-dark';
+import { SpeedgridTransformString } from "../transforms/speedgrid-transform-string";
 
 @Component({
     selector: 'canvas-speedgrid-child',
@@ -31,6 +32,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     @Input() public scrollOffsetY = 0;
 
     private layout = new SpeedgridLayout();
+    private defaultTransform = new SpeedgridTransformString();
 
     constructor(injector: Injector) {
         super(injector);
@@ -50,10 +52,12 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
             this.theme.drawBodyCell(canvas, cell);
 
             const obj = this.data?.[cell.tablePositionY];
+            const value = _.get(obj, this.columns[cell.tablePositionX].property);
 
-            if (obj) {
-                canvas.setFillStyle(new FillStyle('#000'));
-                canvas.drawText(_.get(obj, this.columns[cell.tablePositionX].property), cell.x + 4, cell.y + 21, undefined, true, false);
+            if (this.columns[cell.tablePositionX].transform) {
+                this.columns[cell.tablePositionX].transform?.draw(canvas, this.theme, cell, value);
+            } else {
+                this.defaultTransform.draw(canvas, this.theme, cell, value);
             }
         });
 

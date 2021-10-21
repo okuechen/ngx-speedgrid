@@ -80,7 +80,7 @@ export class CanvasSpeedgridComponent<Entity = any> implements AfterContentInit,
         }
     }
 
-    public onScroll(event: any) {
+    public onScroll(event: any): void {
         this.scrollOffsetX = event.target.scrollLeft;
         this.scrollOffsetY = event.target.scrollTop;
     }
