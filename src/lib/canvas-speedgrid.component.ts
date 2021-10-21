@@ -1,6 +1,7 @@
 /// <reference types="resize-observer-browser" />
 
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, Renderer2, ViewChild, OnDestroy, AfterContentInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges,
+    ElementRef, Renderer2, ViewChild, OnDestroy, AfterContentInit } from '@angular/core';
 import { SpeedgridColumn } from './interfaces/speedgrid-column';
 import { SpeedgridLocation } from './interfaces/speedgrid-location';
 import { getDefaultSpeedgridOptions, SpeedgridOptions } from './interfaces/speedgrid-options';
@@ -37,8 +38,10 @@ export class CanvasSpeedgridComponent<Entity = any> implements AfterContentInit,
 
     private observer: ResizeObserver | null = null;
 
-    constructor(private elementRef: ElementRef, private renderer: Renderer2) {
-
+    constructor(
+        private elementRef: ElementRef,
+        private renderer: Renderer2)
+    {
     }
 
     public ngAfterContentInit(): void {

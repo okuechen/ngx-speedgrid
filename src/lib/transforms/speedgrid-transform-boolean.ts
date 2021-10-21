@@ -5,8 +5,8 @@ import { ISpeedgridTransform } from '../interfaces/speedgrid-transform';
 
 export class SpeedgridTransformBoolean implements ISpeedgridTransform<boolean> {
 
-    public transformValue(value: boolean): string {
-        return value.toString();
+    public transformValue(value: boolean): string | null {
+        return value != null ? value.toString() : null;
     }
 
     public draw(canvas: ICanvas, theme: ISpeedgridTheme, cell: SpeedgridBodyCell, value: boolean): void {

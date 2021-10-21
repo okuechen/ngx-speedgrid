@@ -12,11 +12,11 @@ export class SpeedgridTransformNumber implements ISpeedgridTransform<number> {
         this.pipeArgs = pipeArgs.length > 0 ? pipeArgs : undefined;
     }
 
-    public transformValue(value: number): string {
+    public transformValue(value: number): string | null {
         if (this.pipe) {
             return this.pipe.transform(value, this.pipeArgs);
         } else {
-            return value.toString();
+            return value == null ? null : `${value}`;
         }
     }
 

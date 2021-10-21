@@ -4,7 +4,7 @@ import { ISpeedgridTheme } from './speedgrid-theme';
 
 export interface ISpeedgridTransform<T> {
 
-    transformValue(value: T): string;
+    transformValue(value: T): string | null;
 
     draw(canvas: ICanvas, theme: ISpeedgridTheme, cell: SpeedgridBodyCell, value: T): void;
 

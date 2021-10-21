@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 
 import { CanvasBaseDirective, FillStyle, ICanvas } from 'angular-canvas-base';
@@ -10,13 +10,15 @@ import { getDefaultSpeedgridOptions, SpeedgridOptions } from '../interfaces/spee
 import { SpeedgridLocation } from '../interfaces/speedgrid-location';
 import { SpeedgridLayout } from '../classes/speedgrid-layout';
 import { SpeedgridThemeDark } from '../themes/speedgrid-theme-dark';
-import { SpeedgridTransformString } from "../transforms/speedgrid-transform-string";
+import { SpeedgridTransformString } from '../transforms/speedgrid-transform-string';
+import { SpeedgridImageStorageService } from '../services/speedgrid-image-storage.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'canvas-speedgrid-child',
     template: ''
 })
-export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirective implements OnChanges {
+export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirective implements OnChanges, OnDestroy {
 
     @Input() public columns: SpeedgridColumn<Entity>[] = [];
 
@@ -33,14 +35,24 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
 
     private layout = new SpeedgridLayout();
     private defaultTransform = new SpeedgridTransformString();
+    private imageSubscription: Subscription;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector, private imageStorageService: SpeedgridImageStorageService) {
         super(injector);
+
+        // Redraw on every image that is loaded for now
+        this.imageSubscription = this.imageStorageService.onImageUpdated.subscribe((path) => this.draw());
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
         this.recalcLayout();
         this.draw();
+    }
+
+    public ngOnDestroy(): void {
+        if (this.imageSubscription) {
+            this.imageSubscription.unsubscribe();
+        }
     }
 
     protected onDraw(canvas: ICanvas, frameTime: number): void {
