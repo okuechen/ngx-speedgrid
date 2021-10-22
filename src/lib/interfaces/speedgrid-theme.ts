@@ -1,7 +1,7 @@
 import { SpeedgridBodyCell } from './speedgrid-body-cell';
 import { SpeedgridHeaderCell } from './speedgrid-header-cell';
 import { SpeedgridFooterCell } from './speedgrid-footer-cell';
-import { ICanvas } from 'angular-canvas-base';
+import { ICanvas } from '../../../../angular-canvas-base/src/public-api';
 import { SpeedgridColumn } from './speedgrid-column';
 import { SpeedgridOptions } from './speedgrid-options';
 
@@ -22,4 +22,13 @@ export interface ISpeedgridTheme {
     drawFooterCell(canvas: ICanvas, cell: SpeedgridFooterCell): void;
 
     finishDrawing(canvas: ICanvas): void;
+
+    prepareHeaderCellFont(canvas: ICanvas, cell: SpeedgridHeaderCell): void;
+
+    prepareBodyCellFont(canvas: ICanvas, cell: SpeedgridBodyCell): void;
+
+    prepareFooterCellFont(canvas: ICanvas, cell: SpeedgridFooterCell): void;
+
+    getSpace(spaceIndex: number): number;
+
 }

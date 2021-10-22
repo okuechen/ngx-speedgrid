@@ -6,6 +6,10 @@ export interface SpeedgridOptions {
 
     footerHeight: number;
 
+    multiSelect?: boolean;
+
+    multiOrderable?: boolean;
+
     fullRowSelect?: boolean;
 
     fullRowHover?: boolean;
@@ -20,8 +24,10 @@ export const getDefaultSpeedgridOptions = (): SpeedgridOptions => {
         rowHeight: 32,
         footerHeight: 32,
 
+        multiSelect: false,
+        multiOrderable: false,
         fullRowHover: false,
         fullRowSelect: false,
-        hasFooter: true
+        hasFooter: false
     };
 };

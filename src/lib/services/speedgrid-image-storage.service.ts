@@ -31,4 +31,6 @@ export class SpeedgridImageStorageService {
         newImage.src = path;
         return undefined;
     }
+
+    // TODO: remove not used images
 }

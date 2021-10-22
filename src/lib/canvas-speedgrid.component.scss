@@ -9,14 +9,19 @@
     position: absolute;
     width: 100%;
     height: 100%;
+
+    z-index: 1;
 }
 
 .virtual-content {
     display: block;
+    pointer-events: none;
 }
 
 .child {
     position: absolute;
     left: 0px;
     top: 0px;
+
+    z-index: 0;
 }

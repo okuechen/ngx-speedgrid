@@ -3,6 +3,9 @@ import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { SpeedgridFooterCell } from '../interfaces/speedgrid-footer-cell';
 import { SpeedgridHeaderCell } from '../interfaces/speedgrid-header-cell';
 import { SpeedgridOptions } from '../interfaces/speedgrid-options';
+import { SpeedgridLocation } from '../interfaces/speedgrid-location';
+import { SpeedgridCellType } from '../enums/speedgrid-cell-type';
+import { SpeedgridOrderBy } from '../enums/speedgrid-orderby';
 
 interface SpeedgridBodyRow {
 
@@ -15,6 +18,10 @@ export class SpeedgridLayout {
     protected headerCells: SpeedgridHeaderCell[] = [];
     protected bodyRows: SpeedgridBodyRow[] = [];
     protected footerCells: SpeedgridFooterCell[] = [];
+
+    protected hoveredCells: SpeedgridLocation[] = [];
+    protected selectedCells: SpeedgridLocation[] = [];
+    protected lastPointerPosition?: SpeedgridLocation;
 
     protected maxVisibleRows = 0;
     protected headerHeight = 0;
@@ -36,7 +43,9 @@ export class SpeedgridLayout {
             height: options.headerHeight,
             tablePositionX: index,
             isHovered: false,
-            isSelected: false
+            isSelected: false,
+            property: col.property.toString(),
+            orderby: SpeedgridOrderBy.NONE
         }));
 
         if (options.hasFooter) {
@@ -79,6 +88,8 @@ export class SpeedgridLayout {
         this.headerCells.forEach(cell => {
             if (cell.width + x > offsetX) {
                 cell.x = x - offsetX;
+                cell.isHovered = this.hoveredCells.find(hovered =>
+                    hovered.cellType === SpeedgridCellType.HEADER && hovered.tablePositionX === cell.tablePositionX) != null;
 
                 cellCallback(cell);
             }
@@ -100,6 +111,10 @@ export class SpeedgridLayout {
                     cell.x = x - offsetX;
                     cell.y = y;
                     cell.tablePositionY = posY;
+                    cell.isHovered = this.hoveredCells.find(hovered =>
+                        hovered.cellType === SpeedgridCellType.BODY &&
+                        hovered.tablePositionX === cell.tablePositionX &&
+                        hovered.tablePositionY === cell.tablePositionY) != null;
 
                     cellCallback(cell);
                 }
@@ -124,5 +139,68 @@ export class SpeedgridLayout {
 
             x += cell.width;
         });
+    }
+
+    public handlePointer(location: SpeedgridLocation, event: PointerEvent, options: SpeedgridOptions): boolean {
+        if (event.type === 'mousemove') {
+            if (!this.lastPointerPosition ||
+                this.lastPointerPosition.tablePositionX !== location.tablePositionX ||
+                this.lastPointerPosition.tablePositionY !== location.tablePositionY)
+            {
+                this.hoveredCells = [];
+
+                if (options.fullRowHover && location.cellType === SpeedgridCellType.BODY) {
+                    for (let n = 0; n < this.headerCells.length; n ++) {
+                        this.hoveredCells.push({
+                            ...location,
+                            tablePositionX: n
+                        });
+                    }
+                } else {
+                    this.hoveredCells.push(location);
+                }
+
+                this.lastPointerPosition = location;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public getLocationByPointerEvent(event: PointerEvent, offsetX: number, offsetY: number): SpeedgridLocation {
+        let cellType = SpeedgridCellType.BODY;
+        if (event.offsetY <= this.headerHeight) {
+            cellType = SpeedgridCellType.HEADER;
+        } else if (event.offsetY >= this.gridHeight - this.footerHeight) {
+            cellType = SpeedgridCellType.FOOTER;
+        }
+
+        return {
+            x: event.offsetX,
+            y: event.offsetY,
+            tablePositionX: this.getTablePositionXByPixel(event.offsetX + offsetX),
+            tablePositionY: cellType === SpeedgridCellType.BODY ?
+                this.getTablePositionYByPixel(event.offsetY + offsetY - this.headerHeight) : 0,
+            cellType
+        };
+    }
+
+    protected getTablePositionXByPixel(offsetX: number): number {
+        let x = 0;
+        for (let n = 0; n < this.headerCells.length; n ++) {
+            if (this.headerCells[n].width + x > offsetX) {
+                return n;
+            }
+
+            x += this.headerCells[n].width;
+        }
+
+        return this.headerCells.length - 1;
+    }
+
+    protected getTablePositionYByPixel(offsetY: number): number {
+        const rowOffset = offsetY % this.rowHeight;
+        return Math.ceil(offsetY / this.rowHeight) + (rowOffset ? 0 : 1 );
     }
 }

@@ -1,6 +1,17 @@
+<div
+    #container
+    class="container"
+    (scroll)=" onScroll($event) ">
+    <div
+        #content
+        class="virtual-content">
+    </div>
+</div>
+
 <canvas-speedgrid-child
     #canvas
     class="child"
+    [eventElement]=" container "
     [scrollOffsetX]=" scrollOffsetX "
     [scrollOffsetY]=" scrollOffsetY "
     [columns]=" columns "
@@ -9,10 +20,3 @@
     [theme]=" theme "
     (clicked)=" clicked.emit($event) ">
 </canvas-speedgrid-child>
-
-<div class="container" (scroll)=" onScroll($event) ">
-    <div
-        #content
-        class="virtual-content">
-    </div>
-</div>
