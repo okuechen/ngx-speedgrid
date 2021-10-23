@@ -83,4 +83,5 @@ export class AppComponent implements OnInit {
     public orderByChanged(pairs: Readonly<SpeedgridOrderByPair[]>): void {
         // handle order by request
     }
+}
 ```
