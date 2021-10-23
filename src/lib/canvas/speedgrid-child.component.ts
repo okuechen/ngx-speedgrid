@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 
-import { CanvasBaseDirective, FillStyle, ICanvas } from '../../../../angular-canvas-base/src/public-api'; // TODO: to package
+import { CanvasBaseDirective, ICanvas } from '../../../../angular-canvas-base/src/public-api'; // TODO: to package
 
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
@@ -9,7 +9,6 @@ import { SpeedgridTheme } from '../themes/speedgrid-theme';
 import { getDefaultSpeedgridOptions, SpeedgridOptions } from '../interfaces/speedgrid-options';
 import { SpeedgridLocation } from '../interfaces/speedgrid-location';
 import { SpeedgridLayout } from '../classes/speedgrid-layout';
-import { SpeedgridThemeDark } from '../themes/speedgrid-theme-dark';
 import { SpeedgridBodyCellRendererString } from '../cell-renderer/body/speedgrid-body-cell-renderer-string';
 import { SpeedgridImageStorageService } from '../services/speedgrid-image-storage.service';
 import { Subscription } from 'rxjs';
@@ -18,10 +17,10 @@ import { SpeedgridFooterCellRendererDefault } from '../cell-renderer/footer/spee
 import { SpeedgridOrderByPair } from '../interfaces/speedgrid-orderby-pair';
 
 @Component({
-    selector: 'canvas-speedgrid-child',
+    selector: 'ngx-speedgrid-child',
     template: ''
 })
-export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirective implements OnInit, OnChanges, OnDestroy {
+export class SpeedgridChildComponent<Entity = any> extends CanvasBaseDirective implements OnInit, OnChanges, OnDestroy {
 
     @Input() public columns: SpeedgridColumn<Entity>[] = [];
 

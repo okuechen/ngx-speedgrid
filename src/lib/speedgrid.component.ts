@@ -7,16 +7,16 @@ import { SpeedgridLocation } from './interfaces/speedgrid-location';
 import { getDefaultSpeedgridOptions, SpeedgridOptions } from './interfaces/speedgrid-options';
 import { ISpeedgridTheme } from './interfaces/speedgrid-theme';
 import { SpeedgridTheme } from './themes/speedgrid-theme';
-import { CanvasSpeedgridChildComponent } from './canvas/canvas-speedgrid-child.component';
+import { SpeedgridChildComponent } from './canvas/speedgrid-child.component';
 import { SpeedgridOrderByPair } from './interfaces/speedgrid-orderby-pair';
 
 @Component({
-    selector: 'canvas-speedgrid',
-    templateUrl: './canvas-speedgrid.component.html',
-    styleUrls: ['./canvas-speedgrid.component.scss']
+    selector: 'ngx-speedgrid',
+    templateUrl: './speedgrid.component.html',
+    styleUrls: ['./speedgrid.component.scss']
 })
-export class CanvasSpeedgridComponent<Entity = any> implements AfterContentInit, OnChanges, OnDestroy {
-    @ViewChild('canvas') public canvas!: CanvasSpeedgridChildComponent;
+export class SpeedgridComponent<Entity = any> implements AfterContentInit, OnChanges, OnDestroy {
+    @ViewChild('canvas') public canvas!: SpeedgridChildComponent;
     @ViewChild('content') public content!: ElementRef;
 
     @Input() public columns: SpeedgridColumn<Entity>[] = [];

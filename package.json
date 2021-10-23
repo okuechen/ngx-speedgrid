@@ -1,26 +1,28 @@
 {
-  "name": "angular-canvas-speedgrid",
+  "name": "ngx-speedgrid",
   "author": "Oliver Küchen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/okuechen/angular-canvas-speedgrid/issues"
+    "url": "https://github.com/okuechen/ngx-speedgrid/issues"
   },
-  "homepage": "https://github.com/okuechen/angular-canvas-speedgrid",
+  "homepage": "https://github.com/okuechen/ngx-speedgrid",
   "version": "0.1.0",
   "private": false,
   "typings": "./dist/index.d.ts",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "keywords": [
+    "ngx",
     "angular",
     "canvas",
     "datagrid",
+    "datatable",
     "performance",
     "custom component"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/okuechen/angular-canvas-speedgrid.git"
+    "url": "https://github.com/okuechen/ngx-speedgrid.git"
   },
   "peerDependencies": {
     "@angular/common": "~11.0.9",

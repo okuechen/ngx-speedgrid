@@ -37,6 +37,7 @@ export class SpeedgridLayout {
     protected rowHeight = 0;
     protected footerHeight = 0;
     protected gridHeight = 0;
+    protected currentCursor = 'default';
 
     public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number,
                         rebuild: boolean = true, removeSelected: boolean = false): void
@@ -174,14 +175,14 @@ export class SpeedgridLayout {
             if (location.cellType === SpeedgridCellType.HEADER) {
                 if (location.x <= this.headerCells[location.tablePositionX].x + 5 ||
                     location.x >= this.headerCells[location.tablePositionX].x + this.headerCells[location.tablePositionX].width - 5) {
-                    this.cursorChanged.next('col-resize'); // TODO: remember to net access dom without reason
+                    this.changeCursor('col-resize');
                     this.hoveredCells = [];
 
                     return true;
-                } else {
-                    this.cursorChanged.next('default'); // TODO: remember to net access dom without reason
                 }
             }
+
+            this.changeCursor('default');
 
             if (!this.lastPointerPosition ||
                 this.lastPointerPosition.tablePositionX !== location.tablePositionX ||
@@ -306,5 +307,12 @@ export class SpeedgridLayout {
     protected getTablePositionYByPixel(offsetY: number): number {
         const rowOffset = offsetY % this.rowHeight;
         return Math.ceil(offsetY / this.rowHeight) + (rowOffset ? 0 : 1 );
+    }
+
+    protected changeCursor(cursor: string): void {
+        if (cursor !== this.currentCursor) {
+            this.currentCursor = cursor;
+            this.cursorChanged.next(cursor);
+        }
     }
 }

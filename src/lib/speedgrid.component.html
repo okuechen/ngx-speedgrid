@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<canvas-speedgrid-child
+<ngx-speedgrid-child
     #canvas
     class="child"
     [eventElement]=" container "
@@ -22,4 +22,4 @@
     (hoveredCellsChanged)=" hoveredCellsChanged.emit($event) "
     (selectedCellsChanged)=" selectedCellsChanged.emit($event) "
     (orderByChanged)=" orderByChanged.emit($event) ">
-</canvas-speedgrid-child>
+</ngx-speedgrid-child>

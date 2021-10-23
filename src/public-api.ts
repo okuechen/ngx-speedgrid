@@ -1,6 +1,6 @@
 /*
- * Public API Surface of angular-canvas-speedgrid
+ * Public API Surface of angular-speedgrid
  */
 
-export * from './lib/canvas-speedgrid.component';
-export * from './lib/canvas-speedgrid.module';
+export * from './lib/speedgrid.component';
+export * from './lib/speedgrid.module';
