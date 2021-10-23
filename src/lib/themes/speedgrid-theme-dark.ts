@@ -63,7 +63,12 @@ export class SpeedgridThemeDark implements ISpeedgridTheme {
     }
 
     public drawBodyCell(canvas: ICanvas, cell: SpeedgridBodyCell): void {
-        canvas.setFillStyle(this.whiteFillStyle);
+        if (cell.isSelected) {
+            canvas.setFillStyle(this.greyFillStyle);
+        } else {
+            canvas.setFillStyle(this.whiteFillStyle);
+        }
+
         canvas.setStrokeStyle(this.strokeStyle);
 
         canvas.drawRect(cell.x, cell.y, cell.width, cell.height, true, true);

@@ -1,3 +1,6 @@
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
+
 import { SpeedgridBodyCell } from '../interfaces/speedgrid-body-cell';
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { SpeedgridFooterCell } from '../interfaces/speedgrid-footer-cell';
@@ -6,6 +9,7 @@ import { SpeedgridOptions } from '../interfaces/speedgrid-options';
 import { SpeedgridLocation } from '../interfaces/speedgrid-location';
 import { SpeedgridCellType } from '../enums/speedgrid-cell-type';
 import { SpeedgridOrderBy } from '../enums/speedgrid-orderby';
+import { SpeedgridOrderByPair } from '../interfaces/speedgrid-orderby-pair';
 
 interface SpeedgridBodyRow {
 
@@ -14,6 +18,10 @@ interface SpeedgridBodyRow {
 }
 
 export class SpeedgridLayout {
+
+    public hoveredCellsChanged: Subject<Readonly<SpeedgridLocation[]>> = new Subject();
+    public selectedCellsChanged: Subject<Readonly<SpeedgridLocation[]>> = new Subject();
+    public orderByChanged: Subject<Readonly<SpeedgridOrderByPair[]>> = new Subject();
 
     protected headerCells: SpeedgridHeaderCell[] = [];
     protected bodyRows: SpeedgridBodyRow[] = [];
@@ -29,35 +37,37 @@ export class SpeedgridLayout {
     protected footerHeight = 0;
     protected gridHeight = 0;
 
-    public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number): void {
+    public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number, rebuild: boolean = true): void {
         this.gridHeight = height;
         this.headerHeight = options.headerHeight;
         this.rowHeight = options.rowHeight;
         this.footerHeight = (options.hasFooter ? options.footerHeight : 0);
         this.maxVisibleRows = Math.ceil((this.gridHeight - (this.headerHeight + this.footerHeight)) / this.rowHeight) + 1;
 
-        this.headerCells = columns.map((col, index) => ({
-            x: 0,
-            y: 0,
-            width: col.width,
-            height: options.headerHeight,
-            tablePositionX: index,
-            isHovered: false,
-            isSelected: false,
-            property: col.property.toString(),
-            orderby: SpeedgridOrderBy.NONE
-        }));
-
-        if (options.hasFooter) {
-            this.footerCells = columns.map((col, index) => ({
+        if (rebuild) {
+            this.headerCells = columns.map((col, index) => ({
                 x: 0,
                 y: 0,
                 width: col.width,
                 height: options.headerHeight,
                 tablePositionX: index,
                 isHovered: false,
-                isSelected: false
+                isSelected: false,
+                property: col.property.toString(),
+                orderby: SpeedgridOrderBy.NONE
             }));
+
+            if (options.hasFooter) {
+                this.footerCells = columns.map((col, index) => ({
+                    x: 0,
+                    y: 0,
+                    width: col.width,
+                    height: options.headerHeight,
+                    tablePositionX: index,
+                    isHovered: false,
+                    isSelected: false
+                }));
+            }
         }
 
         this.bodyRows = [];
@@ -116,6 +126,10 @@ export class SpeedgridLayout {
                         hovered.tablePositionX === cell.tablePositionX &&
                         hovered.tablePositionY === cell.tablePositionY) != null;
 
+                    cell.isSelected = this.selectedCells.find(selected =>
+                        selected.tablePositionX === cell.tablePositionX &&
+                        selected.tablePositionY === cell.tablePositionY) != null;
+
                     cellCallback(cell);
                 }
 
@@ -141,8 +155,13 @@ export class SpeedgridLayout {
         });
     }
 
-    public handlePointer(location: SpeedgridLocation, event: PointerEvent, options: SpeedgridOptions): boolean {
-        if (event.type === 'mousemove') {
+    public handlePointer(event: PointerEvent, options: SpeedgridOptions, location?: SpeedgridLocation): boolean {
+        if (event.type === 'mouseleave') {
+            this.hoveredCells = [];
+            return true;
+        }
+
+        if (event.type === 'mousemove' && location) {
             if (!this.lastPointerPosition ||
                 this.lastPointerPosition.tablePositionX !== location.tablePositionX ||
                 this.lastPointerPosition.tablePositionY !== location.tablePositionY)
@@ -161,8 +180,72 @@ export class SpeedgridLayout {
                 }
 
                 this.lastPointerPosition = location;
+                this.hoveredCellsChanged.next(this.hoveredCells);
+
                 return true;
             }
+        }
+
+        if (event.type === 'click' && location) {
+            if (location.cellType === SpeedgridCellType.HEADER) {
+                if (!options.multiOrderable) {
+                    this.headerCells.forEach(cell => {
+                        if (cell.tablePositionX !== location.tablePositionX) {
+                            cell.orderby = SpeedgridOrderBy.NONE;
+                        }
+                    });
+                }
+
+                if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.NONE) {
+                    this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.ASC;
+                } else if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.ASC) {
+                    this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.DESC;
+                } else if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.DESC) {
+                    this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.NONE;
+                }
+
+                this.orderByChanged.next(this.headerCells
+                    .filter(cell => cell.orderby !== SpeedgridOrderBy.NONE)
+                    .map(cell => ({ property: cell.property, direction: cell.orderby })));
+                return true;
+
+            } else if (location.cellType === SpeedgridCellType.BODY) {
+                if (options.multiSelect) {
+                    if (this.selectedCells.find(selected =>
+                        selected.tablePositionX === location.tablePositionX &&
+                        selected.tablePositionY === location.tablePositionY) != null)
+                    {
+                        if (options.fullRowSelect) {
+                            this.selectedCells = _.remove(this.selectedCells,
+                                element => element.tablePositionY !== location.tablePositionY);
+                        } else {
+                            this.selectedCells = _.remove(this.selectedCells,
+                                element => element.tablePositionY !== location.tablePositionY &&
+                                element.tablePositionX !== location.tablePositionX);
+                        }
+
+                        this.selectedCellsChanged.next(this.selectedCells);
+                        return true;
+                    }
+                } else {
+                    this.selectedCells = [];
+                }
+
+                if (options.fullRowSelect) {
+                    for (let n = 0; n < this.headerCells.length; n ++) {
+                        this.selectedCells.push({
+                            ...location,
+                            tablePositionX: n
+                        });
+                    }
+                } else {
+                    this.selectedCells.push(location);
+                }
+
+                this.selectedCellsChanged.next(this.selectedCells);
+            }
+
+            return true;
         }
 
         return false;

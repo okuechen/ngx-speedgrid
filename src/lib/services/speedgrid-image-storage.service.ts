@@ -7,7 +7,7 @@ export type SpeedgridImage = HTMLImageElement | null | undefined;
     providedIn: 'root'
 })
 export class SpeedgridImageStorageService {
-    public onImageUpdated: Subject<string> = new Subject();
+    public imageUpdated: Subject<string> = new Subject();
 
     private imageStorage: {[path: string]: SpeedgridImage } = {};
 
@@ -20,12 +20,12 @@ export class SpeedgridImageStorageService {
 
         newImage.onload = evt => {
             this.imageStorage[path] = newImage;
-            this.onImageUpdated.next(path);
+            this.imageUpdated.next(path);
         };
 
         newImage.onerror = evt => {
             this.imageStorage[path] = null;
-            this.onImageUpdated.next(path);
+            this.imageUpdated.next(path);
         };
 
         newImage.src = path;

@@ -12,6 +12,7 @@ export class SpeedgridTheme implements ISpeedgridTheme {
     protected spaces = [0, 4, 8, 12, 16, 24, 32 ];
     protected headerFillStyle = new FillStyle('#999');
     protected bodyFillStyle = new FillStyle('#bbb');
+    protected selectedFillStyle = new FillStyle('#DDD');
     protected strokeStyle = new StrokeStyle('#333', 1);
     protected fontStyleNormal = new CanvasFont(14, 'Segoe UI');
     protected fontStyleBold = new CanvasFont(14, 'Segoe UI');
@@ -46,11 +47,16 @@ export class SpeedgridTheme implements ISpeedgridTheme {
     }
 
     public drawBodyCell(canvas: ICanvas, cell: SpeedgridBodyCell): void {
-        if (cell.isHovered) {
-            canvas.setFillStyle(this.headerFillStyle);
+        if (cell.isSelected) {
+            canvas.setFillStyle(this.selectedFillStyle);
         } else {
-            canvas.setFillStyle(this.bodyFillStyle);
+            if (cell.isHovered) {
+                canvas.setFillStyle(this.headerFillStyle);
+            } else {
+                canvas.setFillStyle(this.bodyFillStyle);
+            }
         }
+
         canvas.setStrokeStyle(this.strokeStyle);
 
         canvas.drawRect(cell.x, cell.y, cell.width, cell.height, true, true);

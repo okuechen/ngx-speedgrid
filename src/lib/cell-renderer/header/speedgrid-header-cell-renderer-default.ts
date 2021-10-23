@@ -1,9 +1,10 @@
 import { PipeTransform } from '@angular/core';
 
-import { FillStyle, ICanvas } from '../../../../../angular-canvas-base/src/public-api';
+import { ICanvas } from '../../../../../angular-canvas-base/src/public-api';
 import { ISpeedgridTheme } from '../../interfaces/speedgrid-theme';
 import { ISpeedgridCellRenderer } from '../../interfaces/speedgrid-cell-renderer';
 import { SpeedgridHeaderCell } from '../../interfaces/speedgrid-header-cell';
+import { SpeedgridOrderBy } from '../../enums/speedgrid-orderby';
 
 export class SpeedgridHeaderCellRendererDefault implements ISpeedgridCellRenderer<SpeedgridHeaderCell, string> {
     protected pipeArgs: any[] | undefined;
@@ -21,11 +22,19 @@ export class SpeedgridHeaderCellRendererDefault implements ISpeedgridCellRendere
     }
 
     public draw(canvas: ICanvas, theme: ISpeedgridTheme, cell: SpeedgridHeaderCell, value?: string): void {
-        const transformedvalue = this.transformValue(value);
+        theme.prepareHeaderCellFont(canvas, cell);
 
+        const transformedvalue = this.transformValue(value);
         if (transformedvalue != null) {
-            theme.prepareHeaderCellFont(canvas, cell);
             canvas.drawText(transformedvalue, cell.x + 4, cell.y + 21, cell.width, true, false);
+        }
+
+        if (cell.orderby === SpeedgridOrderBy.ASC) {
+            const metrics = canvas.measureText('˄');
+            canvas.drawText('˄', cell.x + cell.width - 4 - metrics.width, cell.y + 21, cell.width, true, false);
+        } else if (cell.orderby === SpeedgridOrderBy.DESC) {
+            const metrics = canvas.measureText('˅');
+            canvas.drawText('˅', cell.x + cell.width - 4 - metrics.width, cell.y + 21, cell.width, true, false);
         }
     }
 

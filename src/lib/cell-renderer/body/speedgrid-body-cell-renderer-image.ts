@@ -19,10 +19,12 @@ export class SpeedgridBodyCellRendererImage implements ISpeedgridCellRenderer<Sp
 
         if (transformedValue != null) {
             const image = this.imageStorageService.getImage(transformedValue);
+            const hoveredMod = cell.isHovered ? 2 : 0;
 
             if (image) {
-                canvas.drawImage(image, cell.x + (cell.width / 2) - (this.width / 2),
-                    cell.y + (cell.height / 2) - (this.height / 2), this.width, this.height);
+                canvas.drawImage(image, cell.x + (cell.width / 2) - (this.width / 2) - hoveredMod,
+                    cell.y + (cell.height / 2) - (this.height / 2) - hoveredMod,
+                    this.width + (hoveredMod * 2), this.height + (hoveredMod * 2));
             }
         }
     }

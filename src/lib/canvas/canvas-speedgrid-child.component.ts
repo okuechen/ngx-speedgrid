@@ -15,6 +15,7 @@ import { SpeedgridImageStorageService } from '../services/speedgrid-image-storag
 import { Subscription } from 'rxjs';
 import { SpeedgridHeaderCellRendererDefault } from '../cell-renderer/header/speedgrid-header-cell-renderer-default';
 import { SpeedgridFooterCellRendererDefault } from '../cell-renderer/footer/speedgrid-footer-cell-renderer-default';
+import { SpeedgridOrderByPair } from "../interfaces/speedgrid-orderby-pair";
 
 @Component({
     selector: 'canvas-speedgrid-child',
@@ -30,7 +31,10 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
 
     @Input() public data?: Entity[] = [];
 
-    @Output() public clicked: EventEmitter<SpeedgridLocation> = new EventEmitter<SpeedgridLocation>();
+    @Output() public clicked: EventEmitter<Readonly<SpeedgridLocation>> = new EventEmitter();
+    @Output() public hoveredCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
+    @Output() public selectedCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
+    @Output() public orderByChanged: EventEmitter<Readonly<SpeedgridOrderByPair[]>> = new EventEmitter();
 
     @Input() public scrollOffsetX = 0;
     @Input() public scrollOffsetY = 0;
@@ -46,7 +50,11 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
         super(injector);
 
         // Redraw on every image that is loaded for now
-        this.imageSubscription = this.imageStorageService.onImageUpdated.subscribe((path) => this.draw());
+        this.imageSubscription = this.imageStorageService.imageUpdated.subscribe((path) => this.draw());
+
+        this.layout.selectedCellsChanged.subscribe(cells => this.selectedCellsChanged.emit(cells));
+        this.layout.hoveredCellsChanged.subscribe(cells => this.hoveredCellsChanged.emit(cells));
+        this.layout.orderByChanged.subscribe(pairs => this.orderByChanged.emit(pairs));
     }
 
     public ngOnInit(): void {
@@ -54,7 +62,15 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        this.recalcLayout();
+        let rebuild = false;
+
+        if (changes.columns != null ||
+            changes.options != null ||
+            changes.theme != null) {
+            rebuild = true;
+        }
+
+        this.recalcLayout(rebuild);
         this.draw();
     }
 
@@ -111,13 +127,19 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     }
 
     protected eventResize(width: number, height: number): void {
-        this.recalcLayout();
+        this.recalcLayout(false);
     }
 
     protected eventPointerMove(event: PointerEvent): void {
         const location = this.layout.getLocationByPointerEvent(event, this.scrollOffsetX, this.scrollOffsetY);
 
-        if (this.layout.handlePointer(location, event, this.options)) {
+        if (this.layout.handlePointer(event, this.options, location)) {
+            this.draw();
+        }
+    }
+
+    protected eventPointerLeave(event: PointerEvent): void {
+        if (this.layout.handlePointer(event, this.options)) {
             this.draw();
         }
     }
@@ -125,7 +147,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     protected eventClick(event: PointerEvent): void {
         const location = this.layout.getLocationByPointerEvent(event, this.scrollOffsetX, this.scrollOffsetY);
 
-        if (this.layout.handlePointer(location, event, this.options)) {
+        if (this.layout.handlePointer(event, this.options, location)) {
             this.draw();
         }
 
@@ -135,7 +157,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     /**
      * Prevent object creation during drawing cause this would slowdown.
      */
-    protected recalcLayout(): void {
-        this.layout.recalcLayout(this.columns, this.options, this.height);
+    protected recalcLayout(rebuild: boolean): void {
+        this.layout.recalcLayout(this.columns, this.options, this.height, rebuild);
     }
 }

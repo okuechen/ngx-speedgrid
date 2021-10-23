@@ -8,6 +8,7 @@ import { getDefaultSpeedgridOptions, SpeedgridOptions } from './interfaces/speed
 import { ISpeedgridTheme } from './interfaces/speedgrid-theme';
 import { SpeedgridTheme } from './themes/speedgrid-theme';
 import { CanvasSpeedgridChildComponent } from './canvas/canvas-speedgrid-child.component';
+import { SpeedgridOrderByPair } from './interfaces/speedgrid-orderby-pair';
 
 @Component({
     selector: 'canvas-speedgrid',
@@ -27,6 +28,9 @@ export class CanvasSpeedgridComponent<Entity = any> implements AfterContentInit,
     @Input() public data?: Entity[] = [];
 
     @Output() public clicked: EventEmitter<SpeedgridLocation> = new EventEmitter<SpeedgridLocation>();
+    @Output() public hoveredCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
+    @Output() public selectedCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
+    @Output() public orderByChanged: EventEmitter<Readonly<SpeedgridOrderByPair[]>> = new EventEmitter();
 
     public scrollOffsetX = 0;
     public scrollOffsetY = 0;
