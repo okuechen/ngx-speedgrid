@@ -37,7 +37,9 @@ export class SpeedgridLayout {
     protected footerHeight = 0;
     protected gridHeight = 0;
 
-    public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number, rebuild: boolean = true): void {
+    public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number,
+                        rebuild: boolean = true, removeSelected: boolean = false): void
+    {
         this.gridHeight = height;
         this.headerHeight = options.headerHeight;
         this.rowHeight = options.rowHeight;
@@ -90,6 +92,11 @@ export class SpeedgridLayout {
             }
 
             this.bodyRows.push(newRow);
+        }
+
+        if (removeSelected) {
+            this.selectedCells = [];
+            this.selectedCellsChanged.next(this.selectedCells);
         }
     }
 

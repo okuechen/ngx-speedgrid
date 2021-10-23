@@ -63,6 +63,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
 
     public ngOnChanges(changes: SimpleChanges): void {
         let rebuild = false;
+        let removeSelected = false;
 
         if (changes.columns != null ||
             changes.options != null ||
@@ -70,7 +71,11 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
             rebuild = true;
         }
 
-        this.recalcLayout(rebuild);
+        if (changes.data) {
+            removeSelected = true;
+        }
+
+        this.recalcLayout(rebuild, removeSelected);
         this.draw();
     }
 
@@ -127,7 +132,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     }
 
     protected eventResize(width: number, height: number): void {
-        this.recalcLayout(false);
+        this.recalcLayout(false, false);
     }
 
     protected eventPointerMove(event: PointerEvent): void {
@@ -157,7 +162,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     /**
      * Prevent object creation during drawing cause this would slowdown.
      */
-    protected recalcLayout(rebuild: boolean): void {
-        this.layout.recalcLayout(this.columns, this.options, this.height, rebuild);
+    protected recalcLayout(rebuild: boolean, removeSelected: boolean): void {
+        this.layout.recalcLayout(this.columns, this.options, this.height, rebuild, removeSelected);
     }
 }
