@@ -67,12 +67,13 @@ export class CanvasSpeedgridComponent<Entity = any> implements AfterContentInit,
         if (changes.columns != null) {
             let fullWidth = 0;
             this.columns?.forEach(col => fullWidth += col.width);
-            this.contentWidth = fullWidth;
+            this.contentWidth = fullWidth + 2;
             resize = true;
         }
 
         if (changes.data != null) {
-            this.contentHeight = (this.data?.length ?? 0) * this.options.rowHeight;
+            this.contentHeight = ((this.data?.length ?? 0) * this.options.rowHeight) + this.options.headerHeight +
+                (this.options.hasFooter ? this.options.footerHeight : 0) + 1;
             resize = true;
         }
 

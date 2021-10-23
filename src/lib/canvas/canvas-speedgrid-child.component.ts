@@ -96,7 +96,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
         this.layout.prepareVisibleBodyCells(this.scrollOffsetX, this.scrollOffsetY, cell => {
             this.theme.drawBodyCell(canvas, cell);
 
-            const obj = this.data?.[cell.tablePositionY];
+            const obj = this.data?.[cell.tablePositionY - 1];
             const value = _.get(obj, this.columns[cell.tablePositionX].property);
 
             if (this.columns[cell.tablePositionX].bodyCellRenderer) {
