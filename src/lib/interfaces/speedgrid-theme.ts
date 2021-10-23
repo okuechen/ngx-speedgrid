@@ -1,7 +1,8 @@
+import { ICanvas } from 'angular-canvas-base';
+
 import { SpeedgridBodyCell } from './speedgrid-body-cell';
 import { SpeedgridHeaderCell } from './speedgrid-header-cell';
 import { SpeedgridFooterCell } from './speedgrid-footer-cell';
-import { ICanvas } from '../../../../angular-canvas-base/src/public-api';
 import { SpeedgridColumn } from './speedgrid-column';
 import { SpeedgridOptions } from './speedgrid-options';
 

@@ -1,4 +1,4 @@
-import { ICanvas } from '../../../../angular-canvas-base/src/public-api';
+import { ICanvas } from 'angular-canvas-base';
 import { SpeedgridCell } from './speedgrid-cell';
 import { ISpeedgridTheme } from './speedgrid-theme';
 

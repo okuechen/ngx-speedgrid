@@ -1,6 +1,5 @@
-import { ICanvas, FillStyle, StrokeStyle, CanvasFont } from '../../../../angular-canvas-base/src/public-api';
+import { ICanvas, FillStyle, StrokeStyle, CanvasFont } from 'angular-canvas-base';
 import { SpeedgridBodyCell } from '../interfaces/speedgrid-body-cell';
-import { SpeedgridCell } from '../interfaces/speedgrid-cell';
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { SpeedgridFooterCell } from '../interfaces/speedgrid-footer-cell';
 import { SpeedgridHeaderCell } from '../interfaces/speedgrid-header-cell';

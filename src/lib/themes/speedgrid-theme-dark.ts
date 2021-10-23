@@ -1,12 +1,10 @@
-import { ICanvas, FillStyle, StrokeStyle, CanvasFont } from '../../../../angular-canvas-base/src/public-api';
+import { ICanvas, FillStyle, StrokeStyle, CanvasFont, ICorners } from 'angular-canvas-base';
 import { SpeedgridBodyCell } from '../interfaces/speedgrid-body-cell';
 import { SpeedgridFooterCell } from '../interfaces/speedgrid-footer-cell';
 import { SpeedgridHeaderCell } from '../interfaces/speedgrid-header-cell';
 import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
-import { ICorners } from '../../../../angular-canvas-base/src/lib/interfaces/canvas.interface';
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { SpeedgridOptions } from '../interfaces/speedgrid-options';
-import { SpeedgridCell } from '../interfaces/speedgrid-cell';
 
 export class SpeedgridThemeDark implements ISpeedgridTheme {
 

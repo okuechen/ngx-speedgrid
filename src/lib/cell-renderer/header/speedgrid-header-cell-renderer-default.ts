@@ -1,6 +1,6 @@
 import { PipeTransform } from '@angular/core';
 
-import { ICanvas } from '../../../../../angular-canvas-base/src/public-api';
+import { ICanvas } from 'angular-canvas-base';
 import { ISpeedgridTheme } from '../../interfaces/speedgrid-theme';
 import { ISpeedgridCellRenderer } from '../../interfaces/speedgrid-cell-renderer';
 import { SpeedgridHeaderCell } from '../../interfaces/speedgrid-header-cell';

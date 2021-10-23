@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 
-import { CanvasBaseDirective, ICanvas } from '../../../../angular-canvas-base/src/public-api'; // TODO: to package
+import { CanvasBaseDirective, ICanvas } from 'angular-canvas-base';
 
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
