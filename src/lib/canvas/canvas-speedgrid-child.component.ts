@@ -15,7 +15,7 @@ import { SpeedgridImageStorageService } from '../services/speedgrid-image-storag
 import { Subscription } from 'rxjs';
 import { SpeedgridHeaderCellRendererDefault } from '../cell-renderer/header/speedgrid-header-cell-renderer-default';
 import { SpeedgridFooterCellRendererDefault } from '../cell-renderer/footer/speedgrid-footer-cell-renderer-default';
-import { SpeedgridOrderByPair } from "../interfaces/speedgrid-orderby-pair";
+import { SpeedgridOrderByPair } from '../interfaces/speedgrid-orderby-pair';
 
 @Component({
     selector: 'canvas-speedgrid-child',
@@ -55,6 +55,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
         this.layout.selectedCellsChanged.subscribe(cells => this.selectedCellsChanged.emit(cells));
         this.layout.hoveredCellsChanged.subscribe(cells => this.hoveredCellsChanged.emit(cells));
         this.layout.orderByChanged.subscribe(pairs => this.orderByChanged.emit(pairs));
+        this.layout.cursorChanged.subscribe(cursor => this.renderer.setStyle(this.eventElement, 'cursor', cursor));
     }
 
     public ngOnInit(): void {
@@ -138,13 +139,13 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     protected eventPointerMove(event: PointerEvent): void {
         const location = this.layout.getLocationByPointerEvent(event, this.scrollOffsetX, this.scrollOffsetY);
 
-        if (this.layout.handlePointer(event, this.options, location)) {
+        if (this.layout.handlePointer(event, this.columns, this.options, location)) {
             this.draw();
         }
     }
 
     protected eventPointerLeave(event: PointerEvent): void {
-        if (this.layout.handlePointer(event, this.options)) {
+        if (this.layout.handlePointer(event, this.columns, this.options)) {
             this.draw();
         }
     }
@@ -152,7 +153,7 @@ export class CanvasSpeedgridChildComponent<Entity = any> extends CanvasBaseDirec
     protected eventClick(event: PointerEvent): void {
         const location = this.layout.getLocationByPointerEvent(event, this.scrollOffsetX, this.scrollOffsetY);
 
-        if (this.layout.handlePointer(event, this.options, location)) {
+        if (this.layout.handlePointer(event, this.columns, this.options, location)) {
             this.draw();
         }
 

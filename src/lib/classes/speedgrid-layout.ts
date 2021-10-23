@@ -22,6 +22,7 @@ export class SpeedgridLayout {
     public hoveredCellsChanged: Subject<Readonly<SpeedgridLocation[]>> = new Subject();
     public selectedCellsChanged: Subject<Readonly<SpeedgridLocation[]>> = new Subject();
     public orderByChanged: Subject<Readonly<SpeedgridOrderByPair[]>> = new Subject();
+    public cursorChanged: Subject<string> = new Subject();
 
     protected headerCells: SpeedgridHeaderCell[] = [];
     protected bodyRows: SpeedgridBodyRow[] = [];
@@ -162,13 +163,26 @@ export class SpeedgridLayout {
         });
     }
 
-    public handlePointer(event: PointerEvent, options: SpeedgridOptions, location?: SpeedgridLocation): boolean {
+    public handlePointer(event: PointerEvent, columns: SpeedgridColumn<any>[],
+                         options: SpeedgridOptions, location?: SpeedgridLocation): boolean {
         if (event.type === 'mouseleave') {
             this.hoveredCells = [];
             return true;
         }
 
         if (event.type === 'mousemove' && location) {
+            if (location.cellType === SpeedgridCellType.HEADER) {
+                if (location.x <= this.headerCells[location.tablePositionX].x + 5 ||
+                    location.x >= this.headerCells[location.tablePositionX].x + this.headerCells[location.tablePositionX].width - 5) {
+                    this.cursorChanged.next('col-resize'); // TODO: remember to net access dom without reason
+                    this.hoveredCells = [];
+
+                    return true;
+                } else {
+                    this.cursorChanged.next('default'); // TODO: remember to net access dom without reason
+                }
+            }
+
             if (!this.lastPointerPosition ||
                 this.lastPointerPosition.tablePositionX !== location.tablePositionX ||
                 this.lastPointerPosition.tablePositionY !== location.tablePositionY)
