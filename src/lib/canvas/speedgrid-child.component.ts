@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import { SpeedgridHeaderCellRendererDefault } from '../cell-renderer/header/speedgrid-header-cell-renderer-default';
 import { SpeedgridFooterCellRendererDefault } from '../cell-renderer/footer/speedgrid-footer-cell-renderer-default';
 import { SpeedgridOrderByPair } from '../interfaces/speedgrid-orderby-pair';
+import { SpeedgridHeaderCell } from '../interfaces/speedgrid-header-cell';
 
 @Component({
     selector: 'ngx-speedgrid-child',
@@ -34,6 +35,7 @@ export class SpeedgridChildComponent<Entity = any> extends CanvasBaseDirective i
     @Output() public hoveredCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
     @Output() public selectedCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
     @Output() public orderByChanged: EventEmitter<Readonly<SpeedgridOrderByPair[]>> = new EventEmitter();
+    @Output() public headerResized: EventEmitter<Readonly<SpeedgridHeaderCell>> = new EventEmitter();
 
     @Input() public scrollOffsetX = 0;
     @Input() public scrollOffsetY = 0;
@@ -55,10 +57,11 @@ export class SpeedgridChildComponent<Entity = any> extends CanvasBaseDirective i
         this.layout.hoveredCellsChanged.subscribe(cells => this.hoveredCellsChanged.emit(cells));
         this.layout.orderByChanged.subscribe(pairs => this.orderByChanged.emit(pairs));
         this.layout.cursorChanged.subscribe(cursor => this.renderer.setStyle(this.eventElement, 'cursor', cursor));
+        this.layout.headerResized.subscribe(header => this.headerResized.emit(header));
     }
 
     public ngOnInit(): void {
-        this.enableDragAndDrop(true);
+
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -133,6 +136,22 @@ export class SpeedgridChildComponent<Entity = any> extends CanvasBaseDirective i
 
     protected eventResize(width: number, height: number): void {
         this.recalcLayout(false, false);
+    }
+
+    protected eventPointerDown(event: PointerEvent): void {
+        const location = this.layout.getLocationByPointerEvent(event, this.scrollOffsetX, this.scrollOffsetY);
+
+        if (this.layout.handlePointer(event, this.columns, this.options, location)) {
+            this.draw();
+        }
+    }
+
+    protected eventPointerUp(event: PointerEvent): void {
+        const location = this.layout.getLocationByPointerEvent(event, this.scrollOffsetX, this.scrollOffsetY);
+
+        if (this.layout.handlePointer(event, this.columns, this.options, location)) {
+            this.draw();
+        }
     }
 
     protected eventPointerMove(event: PointerEvent): void {

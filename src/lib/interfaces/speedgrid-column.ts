@@ -19,6 +19,4 @@ export interface SpeedgridColumn<Entity> {
 
     isResizeable?: boolean;
 
-    isDragable?: boolean;
-
 }

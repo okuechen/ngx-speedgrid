@@ -24,6 +24,9 @@
     "type": "git",
     "url": "https://github.com/okuechen/ngx-speedgrid.git"
   },
+  "scripts": {
+    "typedoc": "typedoc ./src/public-api.ts --tsconfig tsconfig.lib.json"
+  },
   "peerDependencies": {
     "@angular/common": "~11.0.9",
     "@angular/core": "~11.0.9",
@@ -35,6 +38,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.175",
-    "@types/resize-observer-browser": "^0.1.6"
+    "@types/resize-observer-browser": "^0.1.6",
+    "typedoc": "^0.22.6"
   }
 }

@@ -23,6 +23,7 @@ export class SpeedgridLayout {
     public selectedCellsChanged: Subject<Readonly<SpeedgridLocation[]>> = new Subject();
     public orderByChanged: Subject<Readonly<SpeedgridOrderByPair[]>> = new Subject();
     public cursorChanged: Subject<string> = new Subject();
+    public headerResized: Subject<SpeedgridHeaderCell> = new Subject();
 
     protected headerCells: SpeedgridHeaderCell[] = [];
     protected bodyRows: SpeedgridBodyRow[] = [];
@@ -38,6 +39,8 @@ export class SpeedgridLayout {
     protected footerHeight = 0;
     protected gridHeight = 0;
     protected currentCursor = 'default';
+
+    protected resizingHeader?: SpeedgridHeaderCell;
 
     public recalcLayout(columns: SpeedgridColumn<any>[], options: SpeedgridOptions, height: number,
                         rebuild: boolean = true, removeSelected: boolean = false): void
@@ -168,13 +171,53 @@ export class SpeedgridLayout {
                          options: SpeedgridOptions, location?: SpeedgridLocation): boolean {
         if (event.type === 'mouseleave') {
             this.hoveredCells = [];
+
+            if (this.resizingHeader) {
+                this.headerResized.next(this.resizingHeader);
+                this.resizingHeader = undefined;
+            }
+
             return true;
         }
 
+        if (event.type === 'mousedown' && location) {
+            if (location.cellType === SpeedgridCellType.HEADER) {
+                if (location.x <= this.headerCells[location.tablePositionX].x + 5 && location.tablePositionX > 0)
+                {
+                    if (columns[location.tablePositionX - 1].isResizeable !== false) {
+                        this.resizingHeader = this.headerCells[location.tablePositionX - 1];
+                    }
+                }
+                else if (location.x >= this.headerCells[location.tablePositionX].x + this.headerCells[location.tablePositionX].width - 5)
+                {
+                    if (columns[location.tablePositionX].isResizeable !== false) {
+                        this.resizingHeader = this.headerCells[location.tablePositionX];
+                    }
+                }
+            }
+        }
+
         if (event.type === 'mousemove' && location) {
+            if (this.resizingHeader != null) {
+                this.resizingHeader.width = location.x - this.resizingHeader.x;
+
+                this.bodyRows.forEach(row => {
+                    if (this.resizingHeader) {
+                        row.cells[this.resizingHeader.tablePositionX].width = this.resizingHeader.width;
+                    }
+                });
+
+                if (this.footerCells[this.resizingHeader.tablePositionX] != null) {
+                    this.footerCells[this.resizingHeader.tablePositionX].width = this.resizingHeader.width;
+                }
+
+                return true;
+            }
+
             if (location.cellType === SpeedgridCellType.HEADER) {
                 if (location.x <= this.headerCells[location.tablePositionX].x + 5 ||
-                    location.x >= this.headerCells[location.tablePositionX].x + this.headerCells[location.tablePositionX].width - 5) {
+                    location.x >= this.headerCells[location.tablePositionX].x + this.headerCells[location.tablePositionX].width - 5)
+                {
                     this.changeCursor('col-resize');
                     this.hoveredCells = [];
 
@@ -209,27 +252,35 @@ export class SpeedgridLayout {
         }
 
         if (event.type === 'click' && location) {
-            if (location.cellType === SpeedgridCellType.HEADER) {
-                if (!options.multiOrderable) {
-                    this.headerCells.forEach(cell => {
-                        if (cell.tablePositionX !== location.tablePositionX) {
-                            cell.orderby = SpeedgridOrderBy.NONE;
-                        }
-                    });
-                }
-
-                if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.NONE) {
-                    this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.ASC;
-                } else if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.ASC) {
-                    this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.DESC;
-                } else if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.DESC) {
-                    this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.NONE;
-                }
-
-                this.orderByChanged.next(this.headerCells
-                    .filter(cell => cell.orderby !== SpeedgridOrderBy.NONE)
-                    .map(cell => ({ property: cell.property, direction: cell.orderby })));
+            if (this.resizingHeader) {
+                this.headerResized.next(this.resizingHeader);
+                this.resizingHeader = undefined;
                 return true;
+            }
+
+            if (location.cellType === SpeedgridCellType.HEADER) {
+                if (columns[location.tablePositionX].isOrderable !== false) {
+                    if (!options.multiOrderable) {
+                        this.headerCells.forEach(cell => {
+                            if (cell.tablePositionX !== location.tablePositionX) {
+                                cell.orderby = SpeedgridOrderBy.NONE;
+                            }
+                        });
+                    }
+
+                    if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.NONE) {
+                        this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.ASC;
+                    } else if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.ASC) {
+                        this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.DESC;
+                    } else if (this.headerCells[location.tablePositionX].orderby === SpeedgridOrderBy.DESC) {
+                        this.headerCells[location.tablePositionX].orderby = SpeedgridOrderBy.NONE;
+                    }
+
+                    this.orderByChanged.next(this.headerCells
+                        .filter(cell => cell.orderby !== SpeedgridOrderBy.NONE)
+                        .map(cell => ({ property: cell.property, direction: cell.orderby })));
+                    return true;
+                }
 
             } else if (location.cellType === SpeedgridCellType.BODY) {
                 if (options.multiSelect) {

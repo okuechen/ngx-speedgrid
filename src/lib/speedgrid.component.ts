@@ -9,6 +9,7 @@ import { ISpeedgridTheme } from './interfaces/speedgrid-theme';
 import { SpeedgridTheme } from './themes/speedgrid-theme';
 import { SpeedgridChildComponent } from './canvas/speedgrid-child.component';
 import { SpeedgridOrderByPair } from './interfaces/speedgrid-orderby-pair';
+import { SpeedgridHeaderCell } from './interfaces/speedgrid-header-cell';
 
 @Component({
     selector: 'ngx-speedgrid',
@@ -31,6 +32,7 @@ export class SpeedgridComponent<Entity = any> implements AfterContentInit, OnCha
     @Output() public hoveredCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
     @Output() public selectedCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
     @Output() public orderByChanged: EventEmitter<Readonly<SpeedgridOrderByPair[]>> = new EventEmitter();
+    @Output() public headerResized: EventEmitter<Readonly<SpeedgridHeaderCell>> = new EventEmitter();
 
     public scrollOffsetX = 0;
     public scrollOffsetY = 0;
