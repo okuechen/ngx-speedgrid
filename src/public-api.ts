@@ -27,7 +27,7 @@ export * from './lib/interfaces/speedgrid-theme';
 export * from './lib/services/speedgrid-image-storage.service';
 
 export * from './lib/themes/speedgrid-theme';
-export * from './lib/themes/speedgrid-theme-dark';
+export * from './lib/themes/speedgrid-theme-bw';
 
 export * from './lib/speedgrid.component';
 export * from './lib/speedgrid.module';

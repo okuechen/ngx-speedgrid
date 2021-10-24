@@ -6,7 +6,10 @@ import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
 import { SpeedgridColumn } from '../interfaces/speedgrid-column';
 import { SpeedgridOptions } from '../interfaces/speedgrid-options';
 
-export class SpeedgridThemeDark implements ISpeedgridTheme {
+/**
+ * Speedgrid theme with black header / footer and white body cells. Hover bolds the texts.
+ */
+export class SpeedgridThemeBW implements ISpeedgridTheme {
 
     protected spaces = [0, 4, 8, 12, 16, 24, 32 ];
     protected blackFillStyle = new FillStyle('#000');

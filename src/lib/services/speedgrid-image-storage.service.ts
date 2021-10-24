@@ -3,6 +3,10 @@ import { Subject } from 'rxjs';
 
 export type SpeedgridImage = HTMLImageElement | null | undefined;
 
+/**
+ * This service is used to store images rendered inside speedgrids (globally), so no image will be loaded more than once.
+ * Right now, this is only used by [[SpeedgridBodyCellRendererImage]]
+ */
 @Injectable({
     providedIn: 'root'
 })

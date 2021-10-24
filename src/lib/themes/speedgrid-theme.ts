@@ -6,6 +6,9 @@ import { SpeedgridHeaderCell } from '../interfaces/speedgrid-header-cell';
 import { SpeedgridOptions } from '../interfaces/speedgrid-options';
 import { ISpeedgridTheme } from '../interfaces/speedgrid-theme';
 
+/**
+ * Simple default theme for the Speedgrid.
+ */
 export class SpeedgridTheme implements ISpeedgridTheme {
 
     protected spaces = [0, 4, 8, 12, 16, 24, 32 ];

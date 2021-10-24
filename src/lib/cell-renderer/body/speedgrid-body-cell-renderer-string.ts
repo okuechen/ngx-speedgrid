@@ -5,6 +5,10 @@ import { SpeedgridBodyCell } from '../../interfaces/speedgrid-body-cell';
 import { ISpeedgridTheme } from '../../interfaces/speedgrid-theme';
 import { ISpeedgridCellRenderer } from '../../interfaces/speedgrid-cell-renderer';
 
+/**
+ * Most common and default cell renderer, using a pipe to transform the string before rendering.
+ * If no pipe is given, it will render the value as string, no matter what it is.
+ */
 export class SpeedgridBodyCellRendererString implements ISpeedgridCellRenderer<SpeedgridBodyCell, string> {
     protected pipeArgs: any[] | undefined;
 
@@ -25,7 +29,7 @@ export class SpeedgridBodyCellRendererString implements ISpeedgridCellRenderer<S
 
         if (transformedvalue != null) {
             theme.prepareBodyCellFont(canvas, cell);
-            canvas.drawText(transformedvalue, cell.x + 4, cell.y + 21, undefined, true, false);
+            canvas.drawText(transformedvalue, cell.x + theme.getSpace(1), cell.y + 21, undefined, true, false);
         }
     }
 

@@ -4,6 +4,11 @@ import { ISpeedgridTheme } from '../../interfaces/speedgrid-theme';
 import { ISpeedgridCellRenderer } from '../../interfaces/speedgrid-cell-renderer';
 import { SpeedgridImageStorageService } from '../../services/speedgrid-image-storage.service';
 
+/**
+ * The image cell renderer draws icons or images into a cell, depending on width and height parameters.
+ * The [[SpeedgridImageStorageService]] is used to store a given image, to prevent 10k rows to load their own
+ * instance of an image, even though it is always the same.
+ */
 export class SpeedgridBodyCellRendererImage implements ISpeedgridCellRenderer<SpeedgridBodyCell, string> {
 
     constructor(protected imageStorageService: SpeedgridImageStorageService, public width: number, public height: number) {

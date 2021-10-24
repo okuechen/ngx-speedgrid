@@ -6,6 +6,10 @@ import { ISpeedgridCellRenderer } from '../../interfaces/speedgrid-cell-renderer
 import { SpeedgridHeaderCell } from '../../interfaces/speedgrid-header-cell';
 import { SpeedgridOrderBy } from '../../enums/speedgrid-orderby';
 
+/**
+ * Default header cell renderer, rendering the label left in the cell. If the cell is ordered, an arrow will be rendered
+ * at the right side.
+ */
 export class SpeedgridHeaderCellRendererDefault implements ISpeedgridCellRenderer<SpeedgridHeaderCell, string> {
     protected pipeArgs: any[] | undefined;
 

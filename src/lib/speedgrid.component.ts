@@ -11,6 +11,9 @@ import { SpeedgridChildComponent } from './canvas/speedgrid-child.component';
 import { SpeedgridOrderByPair } from './interfaces/speedgrid-orderby-pair';
 import { SpeedgridHeaderCell } from './interfaces/speedgrid-header-cell';
 
+/**
+ * The Speedgrid main component, used with ngx-speedgrid in templates.
+ */
 @Component({
     selector: 'ngx-speedgrid',
     templateUrl: './speedgrid.component.html',
@@ -20,18 +23,49 @@ export class SpeedgridComponent<Entity = any> implements AfterContentInit, OnCha
     @ViewChild('canvas') public canvas!: SpeedgridChildComponent;
     @ViewChild('content') public content!: ElementRef;
 
+    /**
+     * The columns displayed in this Speedgrid.
+     */
     @Input() public columns: SpeedgridColumn<Entity>[] = [];
 
+    /**
+     * Options of the speedgrid. Optional, if not given, [[getDefaultSpeedgridOptions]] will be used.
+     */
     @Input() public options: SpeedgridOptions = getDefaultSpeedgridOptions();
 
+    /**
+     * Theme to display the Speedgrid. [[SpeedgridTheme]] if not given.
+     */
     @Input() public theme: ISpeedgridTheme = new SpeedgridTheme();
 
+    /**
+     * The data rows for this Speedgrid.
+     */
     @Input() public data?: Entity[] = [];
 
+    /**
+     * Called if a click occured inside the grid.
+     */
     @Output() public clicked: EventEmitter<SpeedgridLocation> = new EventEmitter<SpeedgridLocation>();
+
+    /**
+     * Called if cells or one cell is hovered.
+     */
     @Output() public hoveredCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
+
+    /**
+     * Called if the bodycell selection changed.
+     */
     @Output() public selectedCellsChanged: EventEmitter<Readonly<SpeedgridLocation[]>> = new EventEmitter();
+
+    /**
+     * Called if the used clicked on an orderable header.
+     */
     @Output() public orderByChanged: EventEmitter<Readonly<SpeedgridOrderByPair[]>> = new EventEmitter();
+
+    /**
+     * Called if the user resized a header.
+     */
     @Output() public headerResized: EventEmitter<Readonly<SpeedgridHeaderCell>> = new EventEmitter();
 
     public scrollOffsetX = 0;

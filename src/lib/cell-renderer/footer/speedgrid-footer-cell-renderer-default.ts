@@ -5,6 +5,10 @@ import { ISpeedgridTheme } from '../../interfaces/speedgrid-theme';
 import { ISpeedgridCellRenderer } from '../../interfaces/speedgrid-cell-renderer';
 import { SpeedgridFooterCell } from '../../interfaces/speedgrid-footer-cell';
 
+/**
+ * Default footer renderer, not rendering anything at all right now. If you want to render custom content,
+ * simply use the [[ISpeedgridCellRenderer]] or extend this class.
+ */
 export class SpeedgridFooterCellRendererDefault implements ISpeedgridCellRenderer<SpeedgridFooterCell, string> {
     protected pipeArgs: any[] | undefined;
 
