@@ -10,6 +10,8 @@ I created this grid because i have seen a lot or projects with slow grids, in mo
 
 Usually, for UX reasons, grids should not even exist anymore. But reality is different, nearly every project still needs them. But why not load a lot of data, ready to be scrolled without waiting after the initial load. Some components use virtualization to display a lot of data. That works well too. But still, it is not possible to beat the performance of a canvas component.
 
+For more detailed information, visit our blog: https://shipbit.de/blog/speedgrid-high-performance-canvas-component/
+
 ## Installation
 
 `npm install ngx-speedgrid`
