@@ -87,8 +87,8 @@ export class SpeedgridComponent<Entity = any> implements AfterContentInit, OnCha
     public ngAfterContentInit(): void {
         this.observer = new ResizeObserver(entries => {
             entries.forEach((entry: ResizeObserverEntry) => {
-                this.containerWidth = entry.contentRect.width;
-                this.containerHeight = entry.contentRect.height;
+                this.containerWidth = Math.floor(entry.contentRect.width);
+                this.containerHeight = Math.floor(entry.contentRect.height);
             });
 
             this.resize();
