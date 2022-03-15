@@ -6,7 +6,7 @@
     "url": "https://github.com/okuechen/ngx-speedgrid/issues"
   },
   "homepage": "https://github.com/okuechen/ngx-speedgrid",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": false,
   "typings": "./dist/index.d.ts",
   "main": "dist/index.js",
@@ -28,8 +28,8 @@
     "typedoc": "typedoc ./src/public-api.ts --tsconfig tsconfig.lib.json"
   },
   "peerDependencies": {
-    "@angular/common": "~11.0.9",
-    "@angular/core": "~11.0.9",
+    "@angular/common": "^11.0.9",
+    "@angular/core": "^11.0.9",
     "lodash": "^4.17.21"
   },
   "dependencies": {
