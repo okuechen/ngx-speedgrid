@@ -132,4 +132,5 @@ export class AppComponent implements OnInit {
 
 ### History
 
+- Version 0.2.4: Update to Angular version 13.2.6
 - Version 0.2.0: Release Version.

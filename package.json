@@ -6,7 +6,7 @@
     "url": "https://github.com/okuechen/ngx-speedgrid/issues"
   },
   "homepage": "https://github.com/okuechen/ngx-speedgrid",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": false,
   "typings": "./dist/index.d.ts",
   "main": "dist/index.js",
@@ -28,13 +28,13 @@
     "typedoc": "typedoc ./src/public-api.ts --tsconfig tsconfig.lib.json"
   },
   "peerDependencies": {
-    "@angular/common": "^11.0.9",
-    "@angular/core": "^11.0.9",
+    "@angular/common": "^13.2.6",
+    "@angular/core": "^13.2.6",
     "lodash": "^4.17.21"
   },
   "dependencies": {
     "tslib": "^2.0.0",
-    "angular-canvas-base": "0.1.4"
+    "angular-canvas-base": "0.1.5"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.175",
