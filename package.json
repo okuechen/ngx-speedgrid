@@ -6,7 +6,7 @@
     "url": "https://github.com/okuechen/ngx-speedgrid/issues"
   },
   "homepage": "https://github.com/okuechen/ngx-speedgrid",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": false,
   "typings": "./dist/index.d.ts",
   "main": "dist/index.js",
